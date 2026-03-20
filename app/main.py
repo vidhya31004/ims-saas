@@ -1,9 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.database import Base, engine
-from app.routers.asset_router import router as asset_router
-from app.routers.dashboard_router import router as dashboard_router
+from database import Base, engine
+from routers.asset_router import router as asset_router
+from routers.dashboard_router import router as dashboard_router
 
 
 app = FastAPI()
