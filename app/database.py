@@ -1,9 +1,13 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-DATABASE_URL = "postgresql://vidhya@localhost/ims_db"
+# Use SQLite instead of PostgreSQL for now
+DATABASE_URL = "sqlite:///./test.db"
 
-engine = create_engine(DATABASE_URL)
+engine = create_engine(
+    DATABASE_URL,
+    connect_args={"check_same_thread": False}  # needed for SQLite
+)
 
 SessionLocal = sessionmaker(
     autocommit=False,
@@ -14,6 +18,7 @@ SessionLocal = sessionmaker(
 Base = declarative_base()
 
 
+# Dependency to get DB session
 def get_db():
     db = SessionLocal()
     try:
