@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from app.database import get_db
-from app.schemas.asset_schema import AssetCreate
-from app.models.asset import Asset
+from database import get_db
+from schemas.asset_schema import AssetCreate
+from models.asset import Asset
 
 router = APIRouter()
 
