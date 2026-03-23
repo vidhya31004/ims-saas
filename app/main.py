@@ -4,7 +4,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from database import Base, engine
 from routers.asset_router import router as asset_router
 from routers.dashboard_router import router as dashboard_router
-
+app.include_router(asset_router)
+app.include_router(dashboard_router)
 
 app = FastAPI(
     docs_url="/docs",
