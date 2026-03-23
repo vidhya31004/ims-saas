@@ -6,7 +6,11 @@ from routers.asset_router import router as asset_router
 from routers.dashboard_router import router as dashboard_router
 
 
-app = FastAPI()
+app = FastAPI(
+    docs_url="/docs",
+    redoc_url="/redoc",
+    openapi_url="/openapi.json"
+)
 
 
 # CORS (so frontend can talk to backend)
