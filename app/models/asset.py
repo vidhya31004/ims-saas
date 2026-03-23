@@ -2,7 +2,7 @@ from sqlalchemy import Column, String, Integer, Float
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
 
-from app.database import Base
+from database import Base
 
 
 class Asset(Base):

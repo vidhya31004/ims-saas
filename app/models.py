@@ -2,7 +2,7 @@ import uuid
 from sqlalchemy import Column, String, Float, Date, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
-from app.database import Base
+from database import Base
 
 
 # BUSINESS TABLE
