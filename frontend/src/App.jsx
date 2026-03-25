@@ -12,7 +12,10 @@ import {
   Legend
 } from "recharts";
 
-const API_URL = "/api";
+// ✅ FIXED: Use actual backend URL
+const API_URL = window.location.origin;
+// If backend is on different port, use:
+// const API_URL = "http://your-server-ip:8000";
 
 function App() {
 
@@ -55,38 +58,48 @@ function App() {
       return;
     }
 
-    const response = await fetch(
-      `${API_URL}/assets?business_id=${businessId}`
-    );
+    try {
+      const response = await fetch(
+        `${API_URL}/assets?business_id=${businessId}`
+      );
 
-    const data = await response.json();
+      const data = await response.json();
+      setAssets(data);
 
-    setAssets(data);
+      fetchUnderutilized();
+      fetchMaintenanceAlerts();
 
-    fetchUnderutilized();
-    fetchMaintenanceAlerts();
+    } catch (err) {
+      console.error("Error fetching assets:", err);
+    }
   };
 
   const fetchUnderutilized = async () => {
+    try {
+      const response = await fetch(
+        `${API_URL}/underutilized-assets?business_id=${businessId}`
+      );
 
-    const response = await fetch(
-      `${API_URL}/underutilized-assets?business_id=${businessId}`
-    );
+      const data = await response.json();
+      setUnderutilized(data);
 
-    const data = await response.json();
-
-    setUnderutilized(data);
+    } catch (err) {
+      console.error("Error fetching underutilized:", err);
+    }
   };
 
   const fetchMaintenanceAlerts = async () => {
+    try {
+      const response = await fetch(
+        `${API_URL}/maintenance-alerts?business_id=${businessId}`
+      );
 
-    const response = await fetch(
-      `${API_URL}/maintenance-alerts?business_id=${businessId}`
-    );
+      const data = await response.json();
+      setMaintenanceAlerts(data);
 
-    const data = await response.json();
-
-    setMaintenanceAlerts(data);
+    } catch (err) {
+      console.error("Error fetching maintenance alerts:", err);
+    }
   };
 
   const handleInputChange = (e) => {
@@ -100,34 +113,39 @@ function App() {
 
     const assetCode = generateAssetCode();
 
-    await fetch(
-      `${API_URL}/assets?business_id=${businessId}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          ...newAsset,
-          asset_code: assetCode,
-          daily_operating_hours: Number(newAsset.daily_operating_hours),
-          hourly_run_cost: Number(newAsset.hourly_run_cost),
-          maintenance_threshold: Number(newAsset.maintenance_threshold)
-        })
-      }
-    );
+    try {
+      await fetch(
+        `${API_URL}/assets?business_id=${businessId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            ...newAsset,
+            asset_code: assetCode,
+            daily_operating_hours: Number(newAsset.daily_operating_hours),
+            hourly_run_cost: Number(newAsset.hourly_run_cost),
+            maintenance_threshold: Number(newAsset.maintenance_threshold)
+          })
+        }
+      );
 
-    fetchAssets();
+      fetchAssets();
 
-    setNewAsset({
-      asset_name: "",
-      category: "",
-      location: "",
-      department: "",
-      daily_operating_hours: "",
-      hourly_run_cost: "",
-      maintenance_threshold: ""
-    });
+      setNewAsset({
+        asset_name: "",
+        category: "",
+        location: "",
+        department: "",
+        daily_operating_hours: "",
+        hourly_run_cost: "",
+        maintenance_threshold: ""
+      });
+
+    } catch (err) {
+      console.error("Error adding asset:", err);
+    }
   };
 
   const totalAssets = assets.length;
