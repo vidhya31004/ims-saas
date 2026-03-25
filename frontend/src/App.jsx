@@ -12,7 +12,7 @@ import {
   Legend
 } from "recharts";
 
-const API_URL = "https://shark-app-zkvpy.ondigitalocean.app";
+const API_URL = "https://shark-app-zkvpy.ondigitalocean.app/api";
 
 function App() {
 
