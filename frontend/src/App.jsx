@@ -12,6 +12,8 @@ import {
   Legend
 } from "recharts";
 
+const API_URL = "https://shark-app-zkvpy.ondigitalocean.app";
+
 function App() {
 
   const [businessId, setBusinessId] = useState("");
@@ -36,7 +38,6 @@ function App() {
   const locations = ["Office","Warehouse","Factory Floor"];
 
   const generateAssetCode = () => {
-
     if (assets.length === 0) return "A001";
 
     const numbers = assets.map(a =>
@@ -44,9 +45,7 @@ function App() {
     );
 
     const max = Math.max(...numbers);
-    const next = max + 1;
-
-    return "A" + String(next).padStart(3,"0");
+    return "A" + String(max + 1).padStart(3,"0");
   };
 
   const fetchAssets = async () => {
@@ -57,7 +56,7 @@ function App() {
     }
 
     const response = await fetch(
-      `http://127.0.0.1:8000/assets?business_id=${businessId}`
+      `${API_URL}/assets?business_id=${businessId}`
     );
 
     const data = await response.json();
@@ -71,7 +70,7 @@ function App() {
   const fetchUnderutilized = async () => {
 
     const response = await fetch(
-      `http://127.0.0.1:8000/underutilized-assets?business_id=${businessId}`
+      `${API_URL}/underutilized-assets?business_id=${businessId}`
     );
 
     const data = await response.json();
@@ -82,7 +81,7 @@ function App() {
   const fetchMaintenanceAlerts = async () => {
 
     const response = await fetch(
-      `http://127.0.0.1:8000/maintenance-alerts?business_id=${businessId}`
+      `${API_URL}/maintenance-alerts?business_id=${businessId}`
     );
 
     const data = await response.json();
@@ -91,7 +90,6 @@ function App() {
   };
 
   const handleInputChange = (e) => {
-
     setNewAsset({
       ...newAsset,
       [e.target.name]: e.target.value
@@ -103,7 +101,7 @@ function App() {
     const assetCode = generateAssetCode();
 
     await fetch(
-      `http://127.0.0.1:8000/assets?business_id=${businessId}`,
+      `${API_URL}/assets?business_id=${businessId}`,
       {
         method: "POST",
         headers: {
@@ -142,18 +140,11 @@ function App() {
 
   const categoryData = Object.values(
     assets.reduce((acc, asset) => {
-
       if (!acc[asset.category]) {
-        acc[asset.category] = {
-          name: asset.category,
-          value: 0
-        };
+        acc[asset.category] = { name: asset.category, value: 0 };
       }
-
       acc[asset.category].value += 1;
-
       return acc;
-
     }, {})
   );
 
@@ -163,20 +154,11 @@ function App() {
   }));
 
   return (
-
-    <div style={{
-      padding:40,
-      fontFamily:"Arial",
-      background:"#f5f6fa",
-      minHeight:"100vh"
-    }}>
+    <div style={{ padding:40, fontFamily:"Arial", background:"#f5f6fa", minHeight:"100vh" }}>
 
       <h1>Inventory Management System</h1>
 
-      {/* KPI Cards */}
-
       <div style={{display:"flex",gap:20,marginBottom:40}}>
-
         <div style={{background:"white",padding:20,width:200}}>
           <h4>Total Assets</h4>
           <h2>{totalAssets}</h2>
@@ -196,32 +178,20 @@ function App() {
           <h4>Total Hourly Cost</h4>
           <h2>${totalOperatingCost}</h2>
         </div>
-
       </div>
 
-      {/* Business ID */}
-
       <div style={{marginBottom:30}}>
-
         <input
           placeholder="Enter Business ID"
           value={businessId}
           onChange={(e)=>setBusinessId(e.target.value)}
         />
-
-        <button onClick={fetchAssets}>
-          Load Dashboard
-        </button>
-
+        <button onClick={fetchAssets}>Load Dashboard</button>
       </div>
 
-      {/* Charts */}
-
       <div style={{display:"flex",gap:40,marginBottom:40}}>
-
         <div style={{background:"white",padding:20}}>
           <h3>Asset Category Distribution</h3>
-
           <PieChart width={300} height={250}>
             <Pie data={categoryData} dataKey="value" nameKey="name" outerRadius={80}>
               {categoryData.map((entry,index)=>(
@@ -234,7 +204,6 @@ function App() {
 
         <div style={{background:"white",padding:20}}>
           <h3>Daily Usage Hours</h3>
-
           <BarChart width={400} height={250} data={usageData}>
             <CartesianGrid strokeDasharray="3 3"/>
             <XAxis dataKey="name"/>
@@ -244,134 +213,33 @@ function App() {
             <Bar dataKey="hours" fill="#8884d8"/>
           </BarChart>
         </div>
-
       </div>
 
-      {/* Add Asset */}
-
       <div style={{background:"white",padding:20,marginBottom:30}}>
-
         <h2>Add Asset</h2>
 
-        <input
-          name="asset_name"
-          placeholder="Asset Name"
-          value={newAsset.asset_name}
-          onChange={handleInputChange}
-        />
+        <input name="asset_name" placeholder="Asset Name" value={newAsset.asset_name} onChange={handleInputChange} />
 
         <select name="category" value={newAsset.category} onChange={handleInputChange}>
           <option value="">Select Category</option>
-          {categories.map(c => (
-            <option key={c}>{c}</option>
-          ))}
+          {categories.map(c => <option key={c}>{c}</option>)}
         </select>
 
         <select name="department" value={newAsset.department} onChange={handleInputChange}>
           <option value="">Select Department</option>
-          {departments.map(d => (
-            <option key={d}>{d}</option>
-          ))}
+          {departments.map(d => <option key={d}>{d}</option>)}
         </select>
 
         <select name="location" value={newAsset.location} onChange={handleInputChange}>
           <option value="">Select Location</option>
-          {locations.map(l => (
-            <option key={l}>{l}</option>
-          ))}
+          {locations.map(l => <option key={l}>{l}</option>)}
         </select>
 
-        <input
-          name="daily_operating_hours"
-          placeholder="Daily Hours"
-          value={newAsset.daily_operating_hours}
-          onChange={handleInputChange}
-        />
-
-        <input
-          name="hourly_run_cost"
-          placeholder="Hourly Cost"
-          value={newAsset.hourly_run_cost}
-          onChange={handleInputChange}
-        />
-
-        <input
-          name="maintenance_threshold"
-          placeholder="Maintenance Threshold"
-          value={newAsset.maintenance_threshold}
-          onChange={handleInputChange}
-        />
+        <input name="daily_operating_hours" placeholder="Daily Hours" value={newAsset.daily_operating_hours} onChange={handleInputChange} />
+        <input name="hourly_run_cost" placeholder="Hourly Cost" value={newAsset.hourly_run_cost} onChange={handleInputChange} />
+        <input name="maintenance_threshold" placeholder="Maintenance Threshold" value={newAsset.maintenance_threshold} onChange={handleInputChange} />
 
         <button onClick={addAsset}>Add Asset</button>
-
-      </div>
-
-      {/* Maintenance Alerts */}
-
-      <div style={{background:"white",padding:20,marginBottom:30}}>
-
-        <h2>Maintenance Alerts</h2>
-
-        {maintenanceAlerts.length === 0 ? (
-          <p>No maintenance alerts</p>
-        ) : (
-          maintenanceAlerts.map((a,index)=>(
-            <p key={index}>🔧 {a.asset_name} requires maintenance</p>
-          ))
-        )}
-
-      </div>
-
-      {/* Underutilized */}
-
-      <div style={{background:"white",padding:20,marginBottom:30}}>
-
-        <h2>Underutilized Assets</h2>
-
-        {underutilized.length === 0 ? (
-          <p>No underutilized assets</p>
-        ) : (
-          underutilized.map((a,index)=>(
-            <p key={index}>⚠ {a.asset_name} running {a.daily_operating_hours} hrs/day</p>
-          ))
-        )}
-
-      </div>
-
-      {/* Assets Table */}
-
-      <div style={{background:"white",padding:20}}>
-
-        <h2>Assets Table</h2>
-
-        <table border="1" cellPadding="10">
-
-          <thead>
-            <tr>
-              <th>Asset Code</th>
-              <th>Name</th>
-              <th>Category</th>
-              <th>Location</th>
-              <th>Department</th>
-            </tr>
-          </thead>
-
-          <tbody>
-
-            {assets.map(asset => (
-              <tr key={asset.id}>
-                <td>{asset.asset_code}</td>
-                <td>{asset.asset_name}</td>
-                <td>{asset.category}</td>
-                <td>{asset.location}</td>
-                <td>{asset.department}</td>
-              </tr>
-            ))}
-
-          </tbody>
-
-        </table>
-
       </div>
 
     </div>
