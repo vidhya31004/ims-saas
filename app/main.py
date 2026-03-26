@@ -25,8 +25,8 @@ Base.metadata.create_all(bind=engine)
 
 
 # ✅ THEN routers (AFTER app is defined)
-app.include_router(asset_router)
-app.include_router(dashboard_router)
+app.include_router(asset_router, prefix="/api")
+app.include_router(dashboard_router, prefix="/api")
 
 
 # ✅ THEN routes
