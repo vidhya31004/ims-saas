@@ -4,9 +4,14 @@ import os
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
+# Handle Heroku / Postgres URL fix (important)
+if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+# Create engine (NO SQLite args here)
 engine = create_engine(
     DATABASE_URL,
-    connect_args={"check_same_thread": False}  # needed for SQLite
+    pool_pre_ping=True  # helps avoid stale connections
 )
 
 SessionLocal = sessionmaker(
